@@ -20,7 +20,10 @@ public sealed class AskQuestion(IServiceProvider serviceProvider) : IEntrypoint
         var answerProvider = serviceProvider.GetRequiredService<IAnswerProvider>();
 
         var question = string.Join(' ', args);
-        var answer = await answerProvider.GetAnswerAsync(question, CancellationToken.None);
+        AnsiConsole.WriteLine($"> {question}");
+        var answer = await AnsiConsole.Status()
+            .Spinner(Spinner.Known.BouncingBar)
+            .StartAsync("Generating answer", _ => answerProvider.GetAnswerAsync(question, CancellationToken.None));
 
         AnsiConsole.WriteLine(answer);
         AnsiConsole.WriteLine();
